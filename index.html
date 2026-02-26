@@ -529,6 +529,169 @@ body { font-family:'DM Sans',sans-serif; background:#f4f1ec; color:#1a1a1a; }
 .cc-item::before { content:'→'; position:absolute; left:0; color:var(--cc-color, var(--teal)); font-weight:700; font-size:11px; }
 
 /* ════════════════════════════════════════
+   PASSWORD GATE
+════════════════════════════════════════ */
+body.is-locked {
+  background: #071239;
+  overflow: hidden;
+}
+
+#playbook-content {
+  transition: opacity 300ms ease, filter 300ms ease;
+}
+
+body.is-locked #playbook-content {
+  opacity: 0;
+  filter: blur(12px);
+  pointer-events: none;
+  user-select: none;
+}
+
+#gate[hidden] { display: none; }
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 24px;
+  background:
+    radial-gradient(460px 320px at 86% 8%, rgba(126, 73, 65, 0.14), transparent 70%),
+    radial-gradient(360px 280px at 7% 86%, rgba(10, 95, 139, 0.22), transparent 70%),
+    linear-gradient(180deg, #081740 0%, #07143a 100%);
+  overflow: auto;
+}
+
+.gate-shell {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34px;
+}
+
+.gate-brand svg {
+  width: 240px;
+  max-width: 85vw;
+  height: auto;
+  display: block;
+}
+
+.gate-card {
+  width: min(400px, 100%);
+  border: 1px solid rgba(122, 137, 177, 0.34);
+  background: rgba(30, 42, 75, 0.84);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.45);
+  padding: 38px 36px 40px;
+}
+
+.gate-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgba(200, 210, 231, 0.46);
+  margin-bottom: 10px;
+}
+
+.gate-title {
+  font-family: "DM Serif Display", serif;
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+  color: #f2f4f8;
+  margin-bottom: 26px;
+}
+
+.gate-form { display: flex; flex-direction: column; gap: 16px; }
+
+.gate-field {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(122, 137, 177, 0.32);
+  background: rgba(67, 75, 106, 0.45);
+}
+
+.gate-field input {
+  flex: 1 1 auto;
+  height: 48px;
+  border: 0;
+  background: transparent;
+  color: #f3f6ff;
+  font-size: 17px;
+  padding: 0 16px;
+  outline: none;
+}
+
+.gate-field input::placeholder {
+  color: rgba(204, 213, 238, 0.66);
+}
+
+.gate-field button {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: rgba(203, 212, 237, 0.52);
+  font-size: 16px;
+  padding: 0 16px;
+  cursor: pointer;
+  text-transform: lowercase;
+}
+
+.gate-submit {
+  height: 50px;
+  border: 0;
+  cursor: pointer;
+  background: #857734;
+  color: #081237;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3.2px;
+  text-transform: uppercase;
+}
+
+.gate-submit:hover { filter: brightness(1.05); }
+
+.gate-submit:focus-visible,
+.gate-field input:focus-visible,
+.gate-field button:focus-visible {
+  outline: 2px solid #d2bc5a;
+  outline-offset: 1px;
+}
+
+.gate-error {
+  min-height: 18px;
+  color: #ff9f9f;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.gate-footnote {
+  font-size: 14px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: rgba(179, 190, 222, 0.33);
+}
+
+@media (max-width: 560px) {
+  .gate {
+    padding: 28px 16px;
+    align-items: flex-start;
+  }
+  .gate-shell { gap: 22px; }
+  .gate-card { padding: 24px 18px 22px; }
+  .gate-label { font-size: 9px; letter-spacing: 2.8px; }
+  .gate-title { font-size: 42px; margin-bottom: 18px; }
+  .gate-field input { font-size: 18px; height: 44px; }
+  .gate-field button { font-size: 18px; }
+  .gate-submit { height: 46px; font-size: 12px; letter-spacing: 2.2px; }
+  .gate-footnote { font-size: 11px; letter-spacing: 2px; }
+}
+
+/* ════════════════════════════════════════
    PRINT / PDF STYLES
 ════════════════════════════════════════ */
 @media print {
@@ -548,7 +711,35 @@ body { font-family:'DM Sans',sans-serif; background:#f4f1ec; color:#1a1a1a; }
 @page { size: A4 landscape; margin: 10mm; }
 </style>
 </head>
-<body>
+<body class="is-locked">
+<div id="gate" class="gate" role="dialog" aria-modal="true" aria-labelledby="gate-heading">
+  <div class="gate-shell">
+    <div class="gate-brand" aria-hidden="true">
+      <svg width="240" height="48" viewBox="0 0 240 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="scale(1.15)">
+          <path d="M20.66 18.97L20.55 18.99L20.48 19.1C20.1 19.7 19.73 20.3 19.41 20.97C19.09 21.64 18.79 22.32 18.57 23.04C18.81 22.79 19.02 22.53 19.24 22.26C19.28 22.26 19.35 22.27 19.47 22.27C19.97 22.27 21.04 22.18 21.67 21.44C22.1 20.94 22.21 20.24 22.04 19.36C22.39 19.23 22.74 19.09 23.08 18.93C22.25 18.93 21.44 19.04 20.66 18.97Z" fill="white"/>
+          <path d="M30.65 18.64H28.47L29.22 16.39L26.57 0L20.56 12.72H10.27L4.29 0L1.54 16.38L2.31 18.64H0L4.45 23.77H2.55L15.38 34.78L28.19 23.77H26.29L30.74 18.64H30.65ZM28.38 15.19L25.86 12.27L26.49 3.84L28.38 15.19ZM20.19 13.39L15.37 22.38L10.49 13.39H20.19ZM4.33 3.84L4.96 12.27L2.44 15.19L4.33 3.84ZM4.37 24.43H5.93L1.48 19.31H3.27L2.27 16.37L5.7 12.57L4.93 2.94L9.83 13.39H9.84L15.02 23.14L11.34 30.43L4.37 24.43ZM17.97 31.71H12.85L11.89 30.88L15.37 23.86L18.86 30.87L17.97 31.71ZM26.45 24.43L19.48 30.86L15.8 23.14L20.98 13.39H21L25.91 2.94L25.12 12.57L28.55 16.37L27.56 19.31H29.35L24.9 24.43H26.45Z" fill="white"/>
+          <path d="M9.02 21.44C9.65 22.18 10.72 22.27 11.22 22.27C11.34 22.27 11.41 22.26 11.45 22.26C11.66 22.53 11.88 22.79 12.12 23.04C11.9 22.32 11.6 21.64 11.28 20.97C10.96 20.3 10.59 19.7 10.21 19.1L10.14 18.99L10.03 18.97C9.25 18.83 8.44 18.73 7.61 18.73C7.95 18.9 8.3 19.04 8.65 19.17C8.47 20.06 8.58 20.76 9.01 21.44H9.02Z" fill="white"/>
+        </g>
+        <text x="52" y="33" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="white" letter-spacing="6">BRAWN &amp; FOX</text>
+      </svg>
+    </div>
+    <div class="gate-card">
+      <div class="gate-label">CONFIDENTIAL DOCUMENT</div>
+      <h1 id="gate-heading" class="gate-title">Growth Strategy Playbook</h1>
+      <form id="gate-form" class="gate-form" novalidate>
+        <div class="gate-field">
+          <input id="gate-password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+          <button id="gate-toggle" type="button" aria-label="Show password">show</button>
+        </div>
+        <button class="gate-submit" type="submit">Unlock Playbook</button>
+        <p id="gate-error" class="gate-error" role="alert" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="gate-footnote">February 2026 · Confidential</div>
+  </div>
+</div>
+<div id="playbook-content" aria-hidden="true">
 
 <!-- ══════════════════════════════════════════════════════════════
      PAGE 1: COVER
@@ -1901,5 +2092,62 @@ body { font-family:'DM Sans',sans-serif; background:#f4f1ec; color:#1a1a1a; }
 </div>
 </div>
 
+</div>
+<script>
+(function () {
+  var expectedPassword = "Brawn&Fox2026";
+  var storageKey = "brawnandfox_growth_playbook_unlocked";
+
+  var gate = document.getElementById("gate");
+  var body = document.body;
+  var content = document.getElementById("playbook-content");
+  var form = document.getElementById("gate-form");
+  var input = document.getElementById("gate-password");
+  var toggle = document.getElementById("gate-toggle");
+  var error = document.getElementById("gate-error");
+
+  if (!gate || !content || !form || !input || !toggle || !error) {
+    return;
+  }
+
+  function unlock() {
+    body.classList.remove("is-locked");
+    gate.hidden = true;
+    content.setAttribute("aria-hidden", "false");
+    input.value = "";
+  }
+
+  if (sessionStorage.getItem(storageKey) === "true") {
+    unlock();
+  } else {
+    input.focus();
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (input.value === expectedPassword) {
+      error.textContent = "";
+      sessionStorage.setItem(storageKey, "true");
+      unlock();
+      return;
+    }
+    error.textContent = "Incorrect password.";
+    input.select();
+  });
+
+  toggle.addEventListener("click", function () {
+    var isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+    toggle.textContent = isPassword ? "hide" : "show";
+    toggle.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+  });
+
+  input.addEventListener("input", function () {
+    if (error.textContent) {
+      error.textContent = "";
+    }
+  });
+})();
+</script>
 </body>
 </html>
